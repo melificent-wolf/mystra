@@ -2,7 +2,6 @@
 
 import os
 import os.path
-import sys
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -17,10 +16,11 @@ log_dir = "logs"
 log_filename = f"{log_dir}/mystra.log"
 
 if not os.path.exists(log_dir):
-    os.mkdir(log_dir, mode=0755)
+    os.mkdir(log_dir, mode=0o755)
 
 max_log_size = 10 * 1024 * 1024
 handler = RotatingFileHandler(log_filename, maxBytes=max_log_size, backupCount=4)
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
@@ -32,17 +32,22 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 ADMIN_ROLE = os.getenv('ADMIN_ROLE')
 MOD_ROLE = os.getenv('MOD_ROLE')
+NEWCOMER_ROLE = os.getenv('NEWCOMER_ROLE')
 
+# Create bot
 
 intents = discord.Intents.none()
 intents.guilds = True
 intents.members = True
+intents.messages = True
 
-description = "The stars are out and magic is here"
-
-bot = commands.Bot(command_prefix=";", description=description, intents=intents)
+bot = commands.Bot(command_prefix=";", intents=intents)
 
 guild = None
+
+
+# EVENTS
+
 
 @bot.event
 async def on_ready():
@@ -52,31 +57,33 @@ async def on_ready():
 
 @bot.event
 async def on_guild_available(g):
-    global guild
-    guild = g
     print(f"Connected to {g.name}")
-    print("Members:")
-
-    for member in [m for m in g.members if not m.bot]:
-        if member.nick:
-            print(f"  {member.nick} ({member.name}#{member.discriminator})")
-        else:
-            print(f"  {member.name}#{member.discriminator}")
-
     print("------")
-    
+
 
 @bot.event
 async def on_member_join(member):
-    msg = f"{member.mention} has arrived.  Welcome to the Mystic Inn!  Come sit for a spell!"
-    await guild.system_channel.send(msg)
-    await guild.owner.send(f"{member.name} has joined")
+    await guild.owner.send(f"{member.name}#{member.discriminator} is joining")
 
 
 @bot.event
 async def on_member_remove(member):
     msg = f"Bye, {member.display_name}, we hope you enjoyed your stay here."
+    guild = member.guild
     await guild.system_channel.send(msg)
+
+
+@bot.event
+async def on_member_update(before, after):
+    was_new = bool(discord.utils.get(before.roles, name=NEWCOMER_ROLE))
+    is_new = bool(discord.utils.get(after.roles, name=NEWCOMER_ROLE))
+    if (was_new and not is_new):
+        # user has passed captcha
+        msg = f"{after.mention} has arrived.  Welcome to the Mystic Inn!  Come sit for a spell!"
+        guild = after.guild
+        await guild.system_channel.send(msg)
+
+# COMMANDS
 
 
 @bot.command()
@@ -86,4 +93,3 @@ async def hello(ctx):
 
 
 bot.run(TOKEN)
-
