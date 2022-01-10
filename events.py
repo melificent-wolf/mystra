@@ -22,11 +22,29 @@ class EventCog(commands.Cog):
         print("------")
 
     @commands.Cog.listener()
+    async def on_member_ban(self, guild, user):
+        if not hasattr(user, "guild"):
+            return
+
+        newcomer_role = self.cfg.newcomer_role
+        # the first role is @everybody
+        await user.remove_roles(user.roles[1:], reason="banned")
+        newcomer_role = discord.utils.get(guild.roles, self.cfg.newcomer_role)
+        await user.add_roles(newcomer_role, reason="bsnned")
+
+        msg = f"And stay out, {member.display_name}!"
+
+    @commands.Cog.listener()
     async def on_member_join(self, member):
         await member.guild.owner.send(f"{member.name}#{member.discriminator} is joining")
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
+        newcomer_role = self.cfg.newcomer_role
+        was_new = bool(discord.utils.get(member.roles, name=newcomer_role))
+        if was_new:
+            return
+
         msg = f"Bye, {member.display_name}, we hope you enjoyed your stay here."
         guild = member.guild
         await guild.system_channel.send(msg)
