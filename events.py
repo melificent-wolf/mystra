@@ -1,5 +1,3 @@
-import discord
-import discord.utils
 from discord.ext import commands
 
 import config
@@ -22,44 +20,25 @@ class EventCog(commands.Cog):
         print("------")
 
     @commands.Cog.listener()
-    async def on_member_ban(self, guild, user):
-        if not hasattr(user, "guild"):
-            return
-
-        newcomer_role = self.cfg.newcomer_role
-        # the first role is @everybody
-        await user.remove_roles(user.roles[1:], reason="banned")
-        newcomer_role = discord.utils.get(guild.roles, self.cfg.newcomer_role)
-        await user.add_roles(newcomer_role, reason="bsnned")
-
-        msg = f"And stay out, {member.display_name}!"
-
-    @commands.Cog.listener()
     async def on_member_join(self, member):
-        await member.guild.owner.send(f"{member.name}#{member.discriminator} is joining")
-
-    @commands.Cog.listener()
-    async def on_member_remove(self, member):
-        newcomer_role = self.cfg.newcomer_role
-        was_new = bool(discord.utils.get(member.roles, name=newcomer_role))
-        if was_new:
-            return
-
-        msg = f"Bye, {member.display_name}, we hope you enjoyed your stay here."
         guild = member.guild
+        msg = f"{member.mention} has arrived.  Welcome to the Mystic Inn!  Come sit for a spell!"
+
+        await member.guild.owner.send(f"{member.name}#{member.discriminator} has joined")
         await guild.system_channel.send(msg)
 
     @commands.Cog.listener()
-    async def on_member_update(self, before, after):
-        newcomer_role = self.cfg.newcomer_role
-        was_new = bool(discord.utils.get(before.roles, name=newcomer_role))
-        is_new = bool(discord.utils.get(after.roles, name=newcomer_role))
-        if (was_new and not is_new):
-            # user has passed captcha
-            msg = f"{after.mention} has arrived.  Welcome to the Mystic Inn!  Come sit for a spell!"
-            guild = after.guild
-            await guild.system_channel.send(msg)
+    async def on_member_remove(self, member):
+        guild = member.guild
+        msg = f"Bye, {member.display_name}, we hope you enjoyed your stay here."
+        banned_users = await guild.bans()
 
+        for ban in banned_users:
+            if ban.user.id == member.id:
+                msg = f"And stay out, {member.display_name}!"
+                break
+
+        await guild.system_channel.send(msg)
 
 def setup(bot):
     bot.add_cog(EventCog(bot))

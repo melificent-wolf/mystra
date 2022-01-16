@@ -31,8 +31,9 @@ class CommandCog(commands.Cog):
         if not giveto:
             giveto = ctx.author.mention
 
+        emoji = "<:mug:922015564883451945>"
         drink = random.choice(self.drinks)
-        await ctx.send(f"Here, {giveto}, have a nice hot relaxing cup of {drink} :coffee:")
+        await ctx.send(f"Here, {giveto}, have a nice hot relaxing cup of {drink} {emoji}")
 
     @commands.command()
     @commands.has_role(cfg.mod_role)
