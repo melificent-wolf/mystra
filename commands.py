@@ -9,15 +9,29 @@ class CommandCog(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+        bubble_tea = ":bubble_tea:"
+        coffee = ":coffee:"
+        cup_with_straw = ":cup_with_straw:"
+        mug = "<:mug:922015564883451945>"
+        tea = ":tea:"
+        trophy = ":trophy:"
+
         self.drinks = [
-            'tea', 'tea', 'tea',
-            'cocoa', 'cocoa',
-            'coffee',
-            'espresso',
-            'mocha',
-            'mulled cider',
-            'broth',
-            'ball bearings',
+            ('hot', 'cup of tea', tea),
+            ('hot', 'cup of tea', tea),
+            ('hot', 'cup of tea', tea),
+            ('hot', 'cup of cocoa', mug),
+            ('hot', 'cup of cocoa', mug),
+            ('hot', 'cup of coffee', coffee),
+            ('hot', 'cup of espresso', mug),
+            ('hot', 'cup of mocha', mug),
+            ('hot', 'cup of mulled cider', mug),
+            ('hot', 'cup of broth', mug),
+            ('hot', 'cup of ball bearings', mug),
+            ('cold', 'glass of water', cup_with_straw),
+            ('cold', 'bubble tea', bubble_tea),
+            ('cold', 'cup of ambrosia', trophy)
         ]
 
     @commands.command()
@@ -31,9 +45,9 @@ class CommandCog(commands.Cog):
         if not giveto:
             giveto = ctx.author.mention
 
-        emoji = "<:mug:922015564883451945>"
         drink = random.choice(self.drinks)
-        await ctx.send(f"Here, {giveto}, have a nice hot relaxing cup of {drink} {emoji}")
+        (temp, beverage, emoji) = drink
+        await ctx.send(f"Here, {giveto}, have a nice {temp} relaxing {beverage} {emoji}")
 
     @commands.command()
     @commands.has_role(cfg.mod_role)

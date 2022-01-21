@@ -40,7 +40,7 @@ NEWCOMER_ROLE = os.getenv('NEWCOMER_ROLE')
 # Create bot
 
 intents = discord.Intents.none()
-intents.ban_members = True
+intents.bans = True
 intents.guilds = True
 intents.members = True
 intents.messages = True
