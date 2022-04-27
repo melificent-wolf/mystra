@@ -21,14 +21,21 @@ class EventCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        guild = member.guild
-        msg = f"{member.mention} has arrived.  Welcome to the Mystic Inn!  Come sit for a spell!"
+        await member.guild.owner.send(f"{member.name}#{member.discriminator} is joining")
 
-        await member.guild.owner.send(f"{member.name}#{member.discriminator} has joined")
-        await guild.system_channel.send(msg)
+    @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        # member completed verification
+        if before.pending and not after.pending:
+            msg = f"{after.mention} has arrived.  Welcome to the Mystic Inn!  Come sit for a spell!"
+            await after.guild.system_channel.send(msg)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
+        # We haven't said they've arrived, so don't say they've left.
+        if member.pending:
+            return
+
         guild = member.guild
         msg = f"Bye, {member.display_name}, we hope you enjoyed your stay here."
         banned_users = await guild.bans()
@@ -39,6 +46,7 @@ class EventCog(commands.Cog):
                 break
 
         await guild.system_channel.send(msg)
+
 
 def setup(bot):
     bot.add_cog(EventCog(bot))

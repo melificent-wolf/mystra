@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 import config
 
@@ -13,6 +14,7 @@ class CommandCog(commands.Cog):
         bubble_tea = ":bubble_tea:"
         coffee = ":coffee:"
         cup_with_straw = ":cup_with_straw:"
+        milk = ":milk:"
         mug = "<:mug:922015564883451945>"
         tea = ":tea:"
         trophy = ":trophy:"
@@ -30,6 +32,7 @@ class CommandCog(commands.Cog):
             ('hot', 'cup of broth', mug),
             ('hot', 'cup of ball bearings', mug),
             ('cold', 'glass of water', cup_with_straw),
+            ('cold', 'glass of milk', milk),
             ('cold', 'bubble tea', bubble_tea),
             ('cold', 'cup of ambrosia', trophy)
         ]
@@ -48,11 +51,6 @@ class CommandCog(commands.Cog):
         drink = random.choice(self.drinks)
         (temp, beverage, emoji) = drink
         await ctx.send(f"Here, {giveto}, have a nice {temp} relaxing {beverage} {emoji}")
-
-    @commands.command()
-    @commands.has_role(cfg.mod_role)
-    async def hello(self, ctx):
-        await ctx.send("Hello world!")
 
 
 def setup(bot):
