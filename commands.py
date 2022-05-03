@@ -37,12 +37,12 @@ class CommandCog(commands.Cog):
             ('cold', 'cup of ambrosia', trophy)
         ]
 
-    @commands.command()
-    @commands.cooldown(1, 30, commands.BucketType.user)
-    async def botsnack(self, ctx):
-        await ctx.send(f"Thank you, {ctx.author.mention}! :)")
+#    @commands.command()
+#    @commands.cooldown(1, 30, commands.BucketType.user)
+#    async def botsnack(self, ctx):
+#        await ctx.send(f"Thank you, {ctx.author.mention}! :)")
 
-    @commands.command()
+    @commands.slash_command()
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def drink(self, ctx, giveto=None):
         if not giveto:

@@ -33,6 +33,7 @@ logger.addHandler(handler)
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+GUILD_ID = int(os.getenv('DISCORD_GUILD'))
 ADMIN_ROLE = os.getenv('ADMIN_ROLE')
 MOD_ROLE = os.getenv('MOD_ROLE')
 NEWCOMER_ROLE = os.getenv('NEWCOMER_ROLE')
@@ -43,12 +44,12 @@ intents = discord.Intents.none()
 intents.bans = True
 intents.guilds = True
 intents.members = True
-intents.messages = True
+#intents.messages = True
 
-bot = commands.Bot(command_prefix=";", intents=intents)
+bot = discord.Bot(debug_guilds=[GUILD_ID], intents=intents)
 
 
-@bot.command()
+@bot.slash_command(guild_ids=[GUILD_ID], name="reload", description="reload configuration")
 @commands.is_owner()
 async def reload(ctx):
     print("Reload command received, reloading extensions")
