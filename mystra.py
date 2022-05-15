@@ -26,7 +26,7 @@ max_log_size = 10 * 1024 * 1024
 handler = RotatingFileHandler(log_filename, maxBytes=max_log_size, backupCount=4)
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 # Load config
@@ -55,7 +55,7 @@ async def reload(ctx):
     print("Reload command received, reloading extensions")
     for ext in extensions:
         bot.reload_extension(ext)
-    await ctx.send("OK")
+    await ctx.respond("OK")
 
 # Load extensions
 for ext in extensions:

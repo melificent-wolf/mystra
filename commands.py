@@ -45,12 +45,13 @@ class CommandCog(commands.Cog):
     @commands.slash_command()
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def drink(self, ctx, giveto=None):
+        """Give someone a drink"""
         if not giveto:
             giveto = ctx.author.mention
 
         drink = random.choice(self.drinks)
         (temp, beverage, emoji) = drink
-        await ctx.send(f"Here, {giveto}, have a nice {temp} relaxing {beverage} {emoji}")
+        await ctx.respond(f"Here, {giveto}, have a nice {temp} relaxing {beverage} {emoji}")
 
 
 def setup(bot):
