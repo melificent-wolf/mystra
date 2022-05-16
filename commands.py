@@ -1,10 +1,10 @@
-import discord
 from discord.ext import commands
 import config
 
 import random
 
 cfg = config.Config()
+
 
 class CommandCog(commands.Cog):
 
