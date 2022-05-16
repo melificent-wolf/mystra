@@ -1,3 +1,5 @@
+import logging
+
 from datetime import datetime, timedelta
 
 from discord.ext import commands
@@ -10,16 +12,17 @@ class EventCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.cfg = config.Config()
+        self.log = logging.getLogger("mystra")
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"Logged in as {self.bot.user} (ID: {self.bot.user.id})")
-        print("------")
+        self.log.info(f"Logged in as {self.bot.user} (ID: {self.bot.user.id})")
+        self.log.info("------")
 
     @commands.Cog.listener()
     async def on_guild_available(self, guild):
-        print(f"Connected to {guild.name}")
-        print("------")
+        self.log.info(f"Connected to {guild.name}")
+        self.log.info("------")
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
