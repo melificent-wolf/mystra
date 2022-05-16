@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from discord.ext import commands
 
 import config
@@ -38,9 +40,9 @@ class EventCog(commands.Cog):
 
         guild = member.guild
         msg = f"Bye, {member.display_name}, we hope you enjoyed your stay here."
-        banned_users = await guild.bans()
 
-        for ban in banned_users:
+        start = datetime.now() - timedelta(minutes=-1)
+        async for ban in guild.bans(after=start):
             if ban.user.id == member.id:
                 msg = f"And stay out, {member.display_name}!"
                 break
